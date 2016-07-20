@@ -13,7 +13,7 @@ const validateRequest = (token) => {
   return TOKEN == token;
 };
 
-const fetchGithubUser = (username) => {
+const getUser = (username) => {
   const url =  'https://api.github.com/users/' + username;
   return rp({
     uri: url,
@@ -23,21 +23,21 @@ const fetchGithubUser = (username) => {
   });
 };
 
-const prepareResponse = (info, paramToGet) => {
-  let preppedResp = { response_type: "ephemeral", mrkdwn: true };
+const formatResponse = (info, params) => {
+  let resp = { response_type: "ephemeral", mrkdwn: true };
   const EOL = '\n';
-  preppedResp.text = '*Github User: @' + info.login + ' (' + info.name + ')*:' + EOL;
-  if (!paramToGet) {
-    preppedResp.text += '> Company: ' + info.company + EOL;
-    preppedResp.text += '> Location: ' + info.location + EOL;
-    preppedResp.text += '> Hireable: ' + info.hireable + EOL;
-    preppedResp.text += '> Githup Profile: ' + info.html_url + EOL;
+  resp.text = '*Github User: @' + info.login + ' (' + info.name + ')*:' + EOL;
+  if (!params) {
+    resp.text += '> Company: ' + info.company + EOL;
+    resp.text += '> Location: ' + info.location + EOL;
+    resp.text += '> Hireable: ' + info.hireable + EOL;
+    resp.text += '> Githup Profile: ' + info.html_url + EOL;
   }
   else {
-    preppedResp.text += '> ' + paramToGet.charAt(0).toUpperCase() + paramToGet.slice(1) + ': ';
-    preppedResp.text += info[paramToGet];
+    resp.text += '> ' + params.charAt(0).toUpperCase() + params.slice(1) + ': ';
+    resp.text += info[params];
   }
-  return preppedResp;
+  return resp;
 };
 
 app.get('/', (req,res) => {
@@ -59,9 +59,9 @@ app.post('/', (req, res) => {
   const cmd = req.body.text.split(' '),
         user = cmd[0],
         paramToGet = cmd[1];
-  fetchGithubUser(user).then((resp) => {
+  getUser(user).then((resp) => {
     const result = JSON.parse(resp);
-    res.send(prepareResponse(result, paramToGet));
+    res.send(formatResponse(result, paramToGet));
   }).catch((err) => {
     let errMsg = { response_type: "ephemeral" };
     if('statusCode' in err && err.statusCode == 404) {
@@ -75,6 +75,7 @@ app.post('/', (req, res) => {
     }
   });
 });
+
 
 exports.listen = function(port, callback) {
   callback = (typeof callback != 'undefined') ? callback : () => {
