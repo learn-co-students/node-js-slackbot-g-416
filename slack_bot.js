@@ -16,12 +16,12 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   if (req.body.token != TOKEN) return res.status(400).json({ text: 'Sorry, wrong auth token!' });
-
-  if (!req.body.text) {
-    res.status(400).json({ text: 'Sorry, something went wrong!' });
+  if (!!req.body.text) {
+    const argArr = req.body.text.split(' ');
     
-  } else if (req.body.text.length > 0) {
-    let username = req.body.text;
+    const username = argArr[0];
+    let query;
+    if (argArr.length == 2) query = argArr[1];
 
     var options = {
       uri: `https://api.github.com/users/${username}`,
@@ -33,38 +33,44 @@ app.post('/', (req, res) => {
    
     rp(options)
       .then(function (result) {
-        res.json({
-          "text": `${result.login}\n${result.html_url}`,
-          "attachments": [
-            {
-                "fallback": "Github info.",
-                "color": "#36a64f",
-                "pretext": "Here is the Github info you requested:",
-                "author_name": result.login,
-                "author_link": result.html_url,
-                "author_icon": result.avatar_url,
-                "fields": [
-                  {
-                    "title": "Bio",
-                    "value": result.bio,
-                    "short": false
-                  },
-                  {
-                    "title": "Github Url",
-                    "value": result.html_url,
-                    "short": false
-                  }
-                ],
-                "footer": "Github API",
-                "footer_icon": "https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png",
-            }
-          ]
-        });
+        if (!!query) {
+          res.json({ text: `You requested ${result.login}'s ${query}:\n${result[query]}` });
+        } else {
+          res.json({
+            "text": `${result.login}\n${result.html_url}`,
+            "attachments": [
+              {
+                  "fallback": "Github info.",
+                  "color": "#36a64f",
+                  "pretext": "Here is the Github info you requested:",
+                  "author_name": result.login,
+                  "author_link": result.html_url,
+                  "author_icon": result.avatar_url,
+                  "fields": [
+                    {
+                      "title": "Bio",
+                      "value": result.bio,
+                      "short": false
+                    },
+                    {
+                      "title": "Github Url",
+                      "value": result.html_url,
+                      "short": false
+                    }
+                  ],
+                  "footer": "Github API",
+                  "footer_icon": "https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png",
+              }
+            ]
+          });
+        }
       })
       .catch(function (err) {
         console.error(err.message);
         res.status(404).json({ text: 'Sorry, something went wrong!' });
       });
+  } else {
+    res.status(400).json({ text: 'Sorry, something went wrong!' });
   }
 });
 
