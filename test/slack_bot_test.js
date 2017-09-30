@@ -18,7 +18,7 @@ const clone = (obj) => {
 };
 
 let mockSlackPostData = {
-  token: '8cVJhp6TA0fU1gEsFawEussX',
+  token: 'BTWxJGR3icJ8y41z2MjCQ6hW',
   team_id: 'T02KU9PH6',
   team_domain: 'codecuts',
   channel_id: 'C02KU9PJJ',
