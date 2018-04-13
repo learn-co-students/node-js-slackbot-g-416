@@ -47,7 +47,7 @@ describe('server', () => {
       .post('/')
       .set('Accept', 'application/x-www-form-urlencoded')
       .send(transformData(data))
-      .expect(400,done);
+      .expect(400, done);
   });
 
   it('POST to / for existent user returns correctly ', (done) => {
@@ -99,7 +99,7 @@ describe('server', () => {
       });
   });
 
-  it('POST to / with user and specific paramter to fetch returns correctly', (done) => {
+  it('POST to / with user and specific parameter to fetch returns correctly', (done) => {
     let data = clone(mockSlackPostData);
     data.text = 'flatiron-school id';
     request(baseUrl)
