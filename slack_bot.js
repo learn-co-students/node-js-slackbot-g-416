@@ -8,7 +8,7 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const TOKEN = '8cVJhp6TA0fU1gEsFawEussX';
+const TOKEN = 'WEL1hWCWH8wdwP8kat2T9Nd5';
 
 const validRequest = (token) => {
   return TOKEN == token;
