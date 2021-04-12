@@ -6,11 +6,16 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const TOKEN = '[Your Slash Command Token Here]';
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Just an example request to get you started..
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
+
+app.post('/', (req, res) => {
+  res.send('Bad Request')
+})
 
 // This code "exports" a function 'listen` that can be used to start
 // our server on the specified port.
