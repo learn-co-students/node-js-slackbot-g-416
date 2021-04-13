@@ -5,16 +5,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
-const TOKEN = '[Your Slash Command Token Here]';
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const TOKEN = 'FNlmHsmgeL49BD8rZEuScKXe';
+const validateToken = token => {
+  return TOKEN == token;
+}
 // Just an example request to get you started..
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.send('ok');
 });
 
 app.post('/', (req, res) => {
-  res.send('Bad Request')
+  if (!validateToken(req.body.token)){
+    res.status(400).send();
+    return;
+  }
 })
 
 // This code "exports" a function 'listen` that can be used to start
